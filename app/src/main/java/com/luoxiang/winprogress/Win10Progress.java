@@ -17,9 +17,8 @@ import android.view.View;
  * className:	        Win10Progress
  * author:	            Luoxiang
  * time:	            2016/9/20	12:07
- * desc:	            模仿win10系统的进度圈,并非原创,只是自己保存起来,如果侵权,请告知,会立即删除
- *                          并非原创,原创作者地址:http://blog.csdn.net/zhangml0522/article/details/52556418
- *                          原创作者博客:http://my.csdn.net/zhangml0522
+ * desc:	            模仿win10系统的进度圈
+ *
  */
 public class Win10Progress extends View {
     private Paint       mPaint;
@@ -45,7 +44,7 @@ public class Win10Progress extends View {
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(15);
-        mPaint.setColor(Color.RED);
+        mPaint.setColor(Color.WHITE);
         //设置画笔为园笔
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         //抗锯齿

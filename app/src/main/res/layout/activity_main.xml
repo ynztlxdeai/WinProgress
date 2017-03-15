@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.luoxiang.winprogress.MainActivity">
 
-    <com.luoxiang.winprogress.Win10Progress
+    <com.luoxiang.winprogress.WinProgress
         android:background="@color/colorPrimary"
         android:layout_centerInParent="true"
         android:layout_width="110dp"

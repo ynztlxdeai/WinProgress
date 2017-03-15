@@ -20,7 +20,8 @@ import android.view.View;
  * desc:	            模仿win10系统的进度圈
  *
  */
-public class Win10Progress extends View {
+public class WinProgress
+        extends View {
     private Paint       mPaint;
     private Path        mPath;
     private PathMeasure mPathMeasure;
@@ -29,18 +30,43 @@ public class Win10Progress extends View {
     //用这个来接受ValueAnimator的返回值，代表整个动画的进度
     private float         t;
 
-    public Win10Progress(Context context) {
+    public WinProgress(Context context) {
         this(context , null);
     }
 
-    public Win10Progress(Context context, AttributeSet attrs) {
+    public WinProgress(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
-        valueAnimator.start();
+        //valueAnimator.start();
+    }
+
+    /**
+     * 调用这个方法显示
+     */
+    public void show(){
+        post(new Runnable() {
+            @Override
+            public void run() {
+                setVisibility(VISIBLE);
+                valueAnimator.start();
+            }
+        });
+
+    }
+
+    public void dismiss(){
+        post(new Runnable() {
+            @Override
+            public void run() {
+                valueAnimator.removeAllUpdateListeners();
+                valueAnimator.cancel();
+                setVisibility(GONE);
+            }
+        });
+
     }
 
     private void init() {
-
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(15);
@@ -51,7 +77,7 @@ public class Win10Progress extends View {
         mPaint.setAntiAlias(true);
 
         mPath = new Path();
-        RectF rect = new RectF(-150, -150, 150, 150);
+        RectF rect = new RectF(-100, -100, 100, 100);
         mPath.addArc(rect,-90,359.9f);
 
         mPathMeasure = new PathMeasure(mPath,false);

@@ -21,29 +21,31 @@ import android.view.View;
  *
  */
 public class WinProgress
-        extends View {
+        extends View
+{
     private Paint       mPaint;
     private Path        mPath;
     private PathMeasure mPathMeasure;
-    private int         mWidth,mHeight;
+    private int         mWidth, mHeight;
     private ValueAnimator valueAnimator;
+    //默认给100px像素大小
+    private int mDefultSize = 100;
     //用这个来接受ValueAnimator的返回值，代表整个动画的进度
     private float         t;
 
+
+    //设置圆圈大小 默认15个px
+    private int mPointSize = 15;
+
     public WinProgress(Context context) {
-        this(context , null);
+        this(context, null);
     }
 
     public WinProgress(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
-        //valueAnimator.start();
     }
 
-    /**
-     * 调用这个方法显示
-     */
-    public void show(){
+    public void show() {
         post(new Runnable() {
             @Override
             public void run() {
@@ -54,7 +56,7 @@ public class WinProgress
 
     }
 
-    public void dismiss(){
+    public void dismiss() {
         post(new Runnable() {
             @Override
             public void run() {
@@ -67,9 +69,10 @@ public class WinProgress
     }
 
     private void init() {
+
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(15);
+        mPaint.setStrokeWidth(mPointSize);
         mPaint.setColor(Color.WHITE);
         //设置画笔为园笔
         mPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -77,12 +80,14 @@ public class WinProgress
         mPaint.setAntiAlias(true);
 
         mPath = new Path();
-        RectF rect = new RectF(-100, -100, 100, 100);
-        mPath.addArc(rect,-90,359.9f);
+        RectF rect = new RectF(-(getMeasuredWidth() / 2 - mPointSize / 2), -(getMeasuredHeight() / 2 - mPointSize / 2), getMeasuredWidth() / 2 - mPointSize / 2, getMeasuredHeight() / 2 - mPointSize / 2);
+        mPath.addArc(rect, -90, 359.9f);
 
-        mPathMeasure = new PathMeasure(mPath,false);
 
-        valueAnimator = ValueAnimator.ofFloat(0f,1f).setDuration(3000);
+        mPathMeasure = new PathMeasure(mPath, false);
+
+        valueAnimator = ValueAnimator.ofFloat(0f, 1f)
+                                     .setDuration(3000);
         valueAnimator.setRepeatCount(-1);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -94,40 +99,75 @@ public class WinProgress
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        int width;
+        int height;
+
+        if (widthMode == MeasureSpec.EXACTLY) {
+            width = widthSize;
+        } else if (widthMode == MeasureSpec.AT_MOST) {
+            width = Math.min(mDefultSize, widthSize);
+        } else {
+            width = mDefultSize;
+        }
+
+        width += getPaddingLeft() + getPaddingRight();
+        width = Math.max(width, getSuggestedMinimumWidth());
+        if (heightMode == MeasureSpec.EXACTLY || widthMode == MeasureSpec.EXACTLY) {
+            height = heightSize;
+        } else if (heightMode == MeasureSpec.AT_MOST) {
+            height = Math.min(mDefultSize, heightSize);
+        } else {
+            height = mDefultSize;
+        }
+        height += getPaddingTop() + getPaddingBottom();
+        height = Math.max(height, getSuggestedMinimumHeight());
+
+        setMeasuredDimension(width, height);
+
+        init();
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.translate(mWidth/2,mHeight/2);
+        canvas.translate(mWidth / 2, mHeight / 2);
         Path dst = new Path();
-        if(t>=0.95){
-            canvas.drawPoint(0,-150,mPaint);
+        if (t >= 0.95) {
+            canvas.drawPoint(0, -(getMeasuredHeight() / 2 - mPointSize / 2), mPaint);
         }
-        int num = (int) (t/0.05);
-        float s,y,x;
-        switch(num){
+        int   num = (int) (t / 0.05);
+        float s, y, x;
+        switch (num) {
             default:
             case 3:
-                x = t-0.15f*(1-t);
+                x = t - 0.15f * (1 - t);
                 s = mPathMeasure.getLength();
-                y = -s*x*x+2*s*x;
-                mPathMeasure.getSegment(y,y+1,dst,true);
+                y = -s * x * x + 2 * s * x;
+                mPathMeasure.getSegment(y, y + 1, dst, true);
             case 2:
-                x = t-0.10f*(1-t);
+                x = t - 0.10f * (1 - t);
                 s = mPathMeasure.getLength();
-                y = -s*x*x+2*s*x;
-                mPathMeasure.getSegment(y,y+1,dst,true);
+                y = -s * x * x + 2 * s * x;
+                mPathMeasure.getSegment(y, y + 1, dst, true);
             case 1:
-                x = t-0.05f*(1-t);
+                x = t - 0.05f * (1 - t);
                 s = mPathMeasure.getLength();
-                y = -s*x*x+2*s*x;
-                mPathMeasure.getSegment(y,y+1,dst,true);
+                y = -s * x * x + 2 * s * x;
+                mPathMeasure.getSegment(y, y + 1, dst, true);
             case 0:
                 x = t;
                 s = mPathMeasure.getLength();
-                y = -s*x*x+2*s*x;
-                mPathMeasure.getSegment(y,y+1,dst,true);
+                y = -s * x * x + 2 * s * x;
+                mPathMeasure.getSegment(y, y + 1, dst, true);
                 break;
         }
-        canvas.drawPath(dst,mPaint);
+        canvas.drawPath(dst, mPaint);
     }
 
     @Override
@@ -135,6 +175,14 @@ public class WinProgress
         super.onSizeChanged(w, h, oldw, oldh);
         mWidth = w;
         mHeight = h;
+    }
+
+    public int getPointSize() {
+        return mPointSize;
+    }
+
+    public void setPointSize(int pointSize) {
+        mPointSize = pointSize;
     }
 
 }
